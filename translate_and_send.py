@@ -28,7 +28,7 @@ def translate():
         LinkToTweet = json_table['LinkToTweet']
         TweetEmbedCode = json_table['TweetEmbedCode']
         CreatedAt = json_table['CreatedAt']
-        # 翻译
+
         try:
             # translator = Translator(from_lang = FromLang,to_lang = ToLang)
             # TranslatorText = translator.translate(Text)

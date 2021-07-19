@@ -1,14 +1,15 @@
 robot_key = 'c57c249e-ed34-4e37-9064-dad5004d6420'
-from json import dumps
-from requests import post
+import json
+from typing import Text
+import requests
 from flask import Flask
 from flask import request
 app = Flask(__name__)
 # from translate import Translator
-from googletrans import Translator
-translator = Translator(service_urls=[
-      'translate.google.com',
-    ])
+# from googletrans import Translator
+# translator = Translator(service_urls=[
+#       'translate.google.com',
+#     ])
 
 @app.route('/', methods=['POST','GET'])
 def index():
@@ -20,7 +21,7 @@ def index():
 def translate():
     if request.method=='POST':
         json_table = request.get_json()
-        print(dumps(json_table))
+        print(json.dumps(json_table))
         FromLang = json_table['FromLang']
         ToLang = json_table['ToLang']
         Text = json_table['Text']
@@ -32,14 +33,15 @@ def translate():
         try:
             # translator = Translator(from_lang = FromLang,to_lang = ToLang)
             # TranslatorText = translator.translate(Text)
-            TranslatorText = translator.translate(Text, src = 'en', dest = 'zh-cn')
+            # TranslatorText = translator.translate(Text, src = 'en', dest = 'zh-cn')
+            TranslatorText = youdao(Text)
             print(TranslatorText)
             robot_url = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=' + robot_key
             headers = { 'Content-Type': 'application/json' }
             data_table = {
                 "msgtype": "markdown",
                 "markdown": {
-                    "content": "{} **[@elonmusk](https://twitter.com/elonmusk)** \n {}\n{}\n\n[{}]({}})\n".format(
+                    "content": "{} **[@elonmusk](https://twitter.com/elonmusk)** \n {}\n{}\n\n[{}]({})\n".format(
                         CreatedAt, 
                         Text, 
                         TranslatorText,
@@ -48,11 +50,86 @@ def translate():
                         )
                 }
             }
-            data = dumps(data_table)
-            post(robot_url, headers = headers, data = data)
+            data = json.dumps(data_table)
+            requests.post(robot_url, headers = headers, data = data)
         except:
             print('translator error')
         return json_table
+
+import uuid
+import hashlib
+import time
+
+YOUDAO_URL = 'https://openapi.youdao.com/api'
+APP_KEY = '36044cb9bfbba320'
+APP_SECRET = 'bmPfUNL8xii05KpjfqgF2Q8XFWtlWwKz'
+
+def encrypt(signStr):
+    hash_algorithm = hashlib.sha256()
+    hash_algorithm.update(signStr.encode('utf-8'))
+    return hash_algorithm.hexdigest()
+
+def truncate(q):
+    if q is None:
+        return None
+    size = len(q)
+    return q if size <= 20 else q[0:10] + str(size) + q[size - 10:size]
+
+def do_request(data):
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    return requests.post(YOUDAO_URL, data=data, headers=headers)
+
+def youdao(q):
+    # q = "json() returns a JSON object of the result (if the result was written in JSON format, if not it raises an error). Python requests are generally used to fetch the content from a particular resource URI. Whenever we make a request to a specified URI through Python, it returns a response"
+    data = {}
+    data['from'] = 'auto'
+    data['to'] = 'zh-CHS'
+    data['signType'] = 'v3'
+    curtime = str(int(time.time()))
+    data['curtime'] = curtime
+    salt = str(uuid.uuid1())
+    signStr = APP_KEY + truncate(q) + salt + curtime + APP_SECRET
+    sign = encrypt(signStr)
+    data['appKey'] = APP_KEY
+    data['q'] = q
+    data['salt'] = salt
+    data['sign'] = sign
+    # data['vocabId'] = "您的用户词表ID"
+
+    response = do_request(data)
+    # print(response.content)
+    json_data = json.loads(response.text)
+    # print(json.dumps(json_data))
+    # print(json_data['translation'][0])
+    return json_data['translation'][0]
+
+# def tranlate(source, direction):
+#     import requests
+#     import json
+#     url = "http://api.interpreter.caiyunai.com/v1/translator"
+#     #WARNING, this token is a test token for new developers, and it should be replaced by your token
+#     token = "3975l6lr5pcbvidl6jl2"
+
+#     payload = {
+#             "source" : source, 
+#             "trans_type" : direction,
+#             "request_id" : "demo",
+#             "detect": True,
+#             }
+
+#     headers = {
+#             'content-type': "application/json",
+#             'x-authorization': "token " + token,
+#     }
+
+#     response = requests.request("POST", url, data=json.dumps(payload), headers=headers)
+
+#     return json.loads(response.text)['target']
+
+# source = ["Lingocloud is the best translation service.","彩云小译は最高の翻訳サービスです"]
+# target = tranlate(source, "auto2zh")
+
+# print(target)
 
 if __name__=='__main__':
     app.run(
@@ -60,3 +137,4 @@ if __name__=='__main__':
         port = 952,
 	host = '0.0.0.0',
     )
+

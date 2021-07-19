@@ -135,6 +135,7 @@ if __name__=='__main__':
     app.run(
         debug = True,
         port = 952,
-	host = '0.0.0.0',
+	    host = '0.0.0.0',
+        ssl_context='adhoc'
     )
 

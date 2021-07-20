@@ -30,29 +30,32 @@ def translate():
             TweetEmbedCode = json_table['TweetEmbedCode']
             CreatedAt = json_table['CreatedAt']
 
-            TranslatorText = SelectTranslator(Text)
-            print(TranslatorText)
-            robot_url = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=' + robot_key
-            headers = { 'Content-Type': 'application/json' }
-            data_table = {
-                "msgtype": "markdown",
-                "markdown": {
-                    "content": "{} **[@{}](https://twitter.com/{})** \n {}\n{}\n\n[{}]({})\n".format(
-                        CreatedAt,
-                        UserName,
-                        UserName,
-                        Text,
-                        TranslatorText,
-                        LinkToTweet,
-                        LinkToTweet
-                    )
+            try:
+                TranslatorText = SelectTranslator(Text)
+                print(TranslatorText)
+                robot_url = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=' + robot_key
+                headers = { 'Content-Type': 'application/json' }
+                data_table = {
+                    "msgtype": "markdown",
+                    "markdown": {
+                        "content": "{} **[@{}](https://twitter.com/{})** \n {}\n{}\n\n[{}]({})\n".format(
+                            CreatedAt,
+                            UserName,
+                            UserName,
+                            Text,
+                            TranslatorText,
+                            LinkToTweet,
+                            LinkToTweet
+                        )
+                    }
                 }
-            }
-            data = json.dumps(data_table)
-            # requests.post(robot_url, headers = headers, data = data)
+                data = json.dumps(data_table)
+                requests.post(robot_url, headers = headers, data = data)
+            except:
+                print('translator error')
             return json_table
     except:
-        print('translator error')
+        print('post error')
     return {}
 
 YOUDAO_URL = 'https://openapi.youdao.com/api'

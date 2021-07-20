@@ -19,8 +19,10 @@ robot_key = 'c57c249e-ed34-4e37-9064-dad5004d6420'
 @app.route('/translate',methods=['POST','GET'])
 def translate():
     try:
+        print(request.method)
         if request.method=='POST':
-            json_table = request.get_json()
+            print(request.get_json(force=True))
+            json_table = request.get_json(force=True)
             print(json.dumps(json_table))
             # FromLang = json_table['FromLang']
             # ToLang = json_table['ToLang']

@@ -18,9 +18,11 @@ robot_key = 'c57c249e-ed34-4e37-9064-dad5004d6420'
 
 @app.route('/translate',methods=['POST','GET'])
 def translate():
-    try:
-        print(request.method)
+    # try:
         if request.method=='POST':
+            print(request.method)
+            print(request.get_data())
+            print(request.data)
             print(request.get_json(force=True))
             json_table = request.get_json(force=True)
             print(json.dumps(json_table))
@@ -56,9 +58,9 @@ def translate():
             except:
                 print('translator error')
             return json_table
-    except:
-        print('post error')
-    return {}
+    # except:
+    #     print('post error')
+    # return {}
 
 YOUDAO_URL = 'https://openapi.youdao.com/api'
 APP_KEY = '36044cb9bfbba320'

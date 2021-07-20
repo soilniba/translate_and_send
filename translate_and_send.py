@@ -37,13 +37,15 @@ def translate():
             data_table = {
                 "msgtype": "markdown",
                 "markdown": {
-                    "content": "{} **[@elonmusk](https://twitter.com/elonmusk)** \n {}\n{}\n\n[{}]({})\n".format(
-                        CreatedAt, 
-                        Text, 
+                    "content": "{} **[@{}](https://twitter.com/{})** \n {}\n{}\n\n[{}]({})\n".format(
+                        CreatedAt,
+                        UserName,
+                        UserName,
+                        Text,
                         TranslatorText,
-                        'https://twitter.com/elonmusk',
-                        'https://twitter.com/elonmusk'
-                        )
+                        LinkToTweet,
+                        LinkToTweet
+                    )
                 }
             }
             data = json.dumps(data_table)

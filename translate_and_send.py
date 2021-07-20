@@ -1,40 +1,36 @@
-robot_key = 'c57c249e-ed34-4e37-9064-dad5004d6420'
 import json
+import random
+import uuid
+import hashlib
+import time
 from typing import Text
 import requests
 from flask import Flask
 from flask import request
 app = Flask(__name__)
-# from translate import Translator
-# from googletrans import Translator
-# translator = Translator(service_urls=[
-#       'translate.google.com',
-#     ])
+robot_key = 'c57c249e-ed34-4e37-9064-dad5004d6420'
 
-@app.route('/', methods=['POST','GET'])
-def index():
-    json_table = request.get_json()
-    print(json.dumps(json_table))
-    return json_table
+# @app.route('/', methods=['POST','GET'])
+# def index():
+#     json_table = request.get_json()
+#     print(json.dumps(json_table))
+#     return json_table
 
 @app.route('/translate',methods=['POST','GET'])
 def translate():
-    if request.method=='POST':
-        json_table = request.get_json()
-        print(json.dumps(json_table))
-        FromLang = json_table['FromLang']
-        ToLang = json_table['ToLang']
-        Text = json_table['Text']
-        UserName = json_table['UserName']
-        LinkToTweet = json_table['LinkToTweet']
-        TweetEmbedCode = json_table['TweetEmbedCode']
-        CreatedAt = json_table['CreatedAt']
+    try:
+        if request.method=='POST':
+            json_table = request.get_json()
+            print(json.dumps(json_table))
+            # FromLang = json_table['FromLang']
+            # ToLang = json_table['ToLang']
+            Text = json_table['Text']
+            UserName = json_table['UserName']
+            LinkToTweet = json_table['LinkToTweet']
+            TweetEmbedCode = json_table['TweetEmbedCode']
+            CreatedAt = json_table['CreatedAt']
 
-        try:
-            # translator = Translator(from_lang = FromLang,to_lang = ToLang)
-            # TranslatorText = translator.translate(Text)
-            # TranslatorText = translator.translate(Text, src = 'en', dest = 'zh-cn')
-            TranslatorText = youdao(Text)
+            TranslatorText = SelectTranslator(Text)
             print(TranslatorText)
             robot_url = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=' + robot_key
             headers = { 'Content-Type': 'application/json' }
@@ -51,14 +47,11 @@ def translate():
                 }
             }
             data = json.dumps(data_table)
-            requests.post(robot_url, headers = headers, data = data)
-        except:
-            print('translator error')
-        return json_table
-
-import uuid
-import hashlib
-import time
+            # requests.post(robot_url, headers = headers, data = data)
+            return json_table
+    except:
+        print('translator error')
+    return {}
 
 YOUDAO_URL = 'https://openapi.youdao.com/api'
 APP_KEY = '36044cb9bfbba320'
@@ -103,32 +96,40 @@ def youdao(q):
     # print(json_data['translation'][0])
     return json_data['translation'][0]
 
-# def tranlate(source, direction):
-#     import requests
-#     import json
-#     url = "http://api.interpreter.caiyunai.com/v1/translator"
-#     #WARNING, this token is a test token for new developers, and it should be replaced by your token
-#     token = "3975l6lr5pcbvidl6jl2"
+def caiyun(source):
+    direction = 'auto2zh'
+    url = "http://api.interpreter.caiyunai.com/v1/translator"
+    #WARNING, this token is a test token for new developers, and it should be replaced by your token
+    token = "1k9v5nhzo36ukir8cs7y"
 
-#     payload = {
-#             "source" : source, 
-#             "trans_type" : direction,
-#             "request_id" : "demo",
-#             "detect": True,
-#             }
+    payload = {
+            "source" : source, 
+            "trans_type" : direction,
+            "request_id" : "demo",
+            "detect": True,
+            }
 
-#     headers = {
-#             'content-type': "application/json",
-#             'x-authorization': "token " + token,
-#     }
+    headers = {
+            'content-type': "application/json",
+            'x-authorization': "token " + token,
+    }
 
-#     response = requests.request("POST", url, data=json.dumps(payload), headers=headers)
+    response = requests.request("POST", url, data=json.dumps(payload), headers=headers)
 
-#     return json.loads(response.text)['target']
+    return json.loads(response.text)['target']
 
-# source = ["Lingocloud is the best translation service.","彩云小译は最高の翻訳サービスです"]
-# target = tranlate(source, "auto2zh")
+def SelectTranslator(text):
+    # TranslatorList = [caiyun, youdao]
+    # fnTranslator = random.choice(TranslatorList)
+    RandomInt = random.randint(1,10)
+    if RandomInt <= 2:
+        returntest = '[有道]' + youdao(text)
+    else:
+        returntest = '[彩云]' + caiyun(text)
+    return returntest
 
+# source = "Lingocloud is the best translation service."
+# target = SelectTranslator(source)
 # print(target)
 
 if __name__=='__main__':
@@ -136,6 +137,6 @@ if __name__=='__main__':
         debug = True,
         port = 952,
 	    host = '0.0.0.0',
-        ssl_context='adhoc'
+        ssl_context=('gjol.vip.pem', 'gjol.vip.key')
     )
 

@@ -137,5 +137,5 @@ if __name__=='__main__':
         debug = True,
         port = 952,
         host = '0.0.0.0',
-        ssl_context=('gjol_vip.pem', 'gjol_vip.key')
+        ssl_context=('sg.gjol.vip.pem', 'sg.gjol.vip.key')
     )

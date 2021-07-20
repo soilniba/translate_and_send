@@ -1,5 +1,5 @@
 import json
-import demjson
+# import demjson
 import random
 import uuid
 import hashlib
@@ -26,14 +26,12 @@ def translate():
             print(request.get_data().decode('utf-8'))
             print(request.get_json(force=True))
             # json_table = request.get_json(force=True)
-            json_table = demjson.encode(request.get_data().decode('utf-8'))
+            # json_table = demjson.encode(request.get_data())
+            json_table = json.loads(request.get_data())
             print(json.dumps(json_table))
-            # FromLang = json_table['FromLang']
-            # ToLang = json_table['ToLang']
             Text = json_table['Text']
             UserName = json_table['UserName']
             LinkToTweet = json_table['LinkToTweet']
-            TweetEmbedCode = json_table['TweetEmbedCode']
             CreatedAt = json_table['CreatedAt']
 
             try:

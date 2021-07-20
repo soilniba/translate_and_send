@@ -20,11 +20,7 @@ robot_key = 'c57c249e-ed34-4e37-9064-dad5004d6420'
 @app.route('/translate',methods=['POST','GET'])
 def translate():
     try:
-        print(request.method)
         if request.method=='POST':
-            print(request.get_data())
-            print(request.get_data().decode('utf-8'))
-            print(request.get_json(force=True))
             # json_table = request.get_json(force=True)
             # json_table = demjson.encode(request.get_data())
             json_table = json.loads(request.get_data())
@@ -132,9 +128,9 @@ def SelectTranslator(text):
     # fnTranslator = random.choice(TranslatorList)
     RandomInt = random.randint(1,10)
     if RandomInt <= 2:
-        returntest = '[有道]' + youdao(text)
+        returntest = '[有道]\n' + youdao(text)
     else:
-        returntest = '[彩云]' + caiyun(text)
+        returntest = '[彩云]\n' + caiyun(text)
     return returntest
 
 # source = "Lingocloud is the best translation service."

@@ -21,16 +21,27 @@ robot_key = 'c57c249e-ed34-4e37-9064-dad5004d6420'
 def translate():
     try:
         if request.method=='POST':
+            url_args = request.args
+            print(url_args)
+            print(url_args.get("UserName"))
+            print(url_args.get("LinkToTweet"))
+            print(url_args.get("CreatedAt"))
             post_data = request.get_data()
             print(post_data)
-            # json_table = request.get_json(force=True)
-            json_table = demjson.encode(post_data)
-            # json_table = json.loads(post_data)
-            print(json.dumps(json_table))
-            Text = json_table['Text']
-            UserName = json_table['UserName']
-            LinkToTweet = json_table['LinkToTweet']
-            CreatedAt = json_table['CreatedAt']
+
+            Text = post_data.decode('utf-8')
+            UserName = url_args.get("UserName")
+            LinkToTweet = url_args.get("LinkToTweet")
+            CreatedAt = url_args.get("CreatedAt")
+
+            # # json_table = request.get_json(force=True)
+            # json_table = demjson.encode(post_data)
+            # # json_table = json.loads(post_data)
+            # print(json.dumps(json_table))
+            # Text = json_table['Text']
+            # UserName = json_table['UserName']
+            # LinkToTweet = json_table['LinkToTweet']
+            # CreatedAt = json_table['CreatedAt']
 
             try:
                 TranslatorText = SelectTranslator(Text)

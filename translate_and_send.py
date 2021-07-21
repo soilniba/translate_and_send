@@ -129,7 +129,7 @@ def SelectTranslator(text):
     # TranslatorList = [caiyun, youdao]
     # fnTranslator = random.choice(TranslatorList)
     RandomInt = random.randint(1,10)
-    if RandomInt <= 2:
+    if RandomInt <= 5:
         returntest = '[有道]\n' + youdao(text)
     else:
         returntest = '[彩云]\n' + caiyun(text)

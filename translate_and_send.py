@@ -66,7 +66,6 @@ def translate():
                 requests.post(robot_url, headers = headers, data = data)
             except:
                 print('translator error')
-            return json_table
     except:
         print('post error')
     return {}
@@ -155,5 +154,5 @@ if __name__=='__main__':
         debug = True,
         port = 952,
         host = '0.0.0.0',
-        ssl_context=('sg.gjol.vip.pem', 'sg.gjol.vip.key')
+        # ssl_context=('sg.gjol.vip.pem', 'sg.gjol.vip.key')
     )

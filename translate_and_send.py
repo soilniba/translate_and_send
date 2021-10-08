@@ -62,7 +62,7 @@ def translate():
 
                 # 发送到飞书机器人
                 feishu_content = {"content": []}
-                feishu_content["title"] = TranslatorText
+                # feishu_content["title"] = TranslatorText
                 feishu_content["content"].append([
                     {
                         "tag": "text",
@@ -77,7 +77,7 @@ def translate():
                 feishu_content["content"].append([
                     {
                         "tag": "text",
-                        "text": "\n{}{}\n{}".format(Text, TranslatorText, LinkToTweet),
+                        "text": "\n{}\n{}\n{}".format(Text, TranslatorText, LinkToTweet),
                     },
                 ])
                 send_feishu_robot(feishu_robot_key, feishu_content)

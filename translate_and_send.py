@@ -9,8 +9,9 @@ import requests
 from flask import Flask
 from flask import request
 app = Flask(__name__)
-robot_key = 'c57c249e-ed34-4e37-9064-dad5004d6420'
-
+wx_robot_key = 'c57c249e-ed34-4e37-9064-dad5004d6420'
+feishu_robot_key = '86b74a8b-d1d4-4965-ad4f-56aec55f298a'
+# https://open.feishu.cn/open-apis/bot/v2/hook/86b74a8b-d1d4-4965-ad4f-56aec55f298a
 # @app.route('/', methods=['POST','GET'])
 # def index():
 #     json_table = request.get_json()
@@ -46,12 +47,9 @@ def translate():
             try:
                 TranslatorText = SelectTranslator(Text)
                 print(TranslatorText)
-                robot_url = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=' + robot_key
-                headers = { 'Content-Type': 'application/json' }
-                data_table = {
-                    "msgtype": "markdown",
-                    "markdown": {
-                        "content": "{} **[@{}](https://twitter.com/{})** \n {}\n{}\n\n[{}]({})\n".format(
+
+                # 发送到微信机器人
+                wx_content = "{} **[@{}](https://twitter.com/{})** \n {}\n{}\n\n[{}]({})\n".format(
                             CreatedAt,
                             UserName,
                             UserName,
@@ -60,15 +58,59 @@ def translate():
                             LinkToTweet,
                             LinkToTweet
                         )
-                    }
-                }
-                data = json.dumps(data_table)
-                requests.post(robot_url, headers = headers, data = data)
+                send_wx_robot(wx_robot_key, wx_content)
+
+                # 发送到飞书机器人
+                feishu_content = {"content": []}
+                feishu_content["title"] = TranslatorText
+                feishu_content["content"].append([
+                    {
+                        "tag": "text",
+                        "text": CreatedAt,
+                    },
+                    {
+                        "tag": "a",
+                        "text": UserName,
+                        "href": 'https://twitter.com/' + UserName
+                    },
+                ])
+                feishu_content["content"].append([
+                    {
+                        "tag": "text",
+                        "text": "\n{}{}\n{}".format(Text, TranslatorText, LinkToTweet),
+                    },
+                ])
+                send_feishu_robot(feishu_robot_key, feishu_content)
             except:
                 print('translator error')
     except:
         print('post error')
     return {}
+
+def send_wx_robot(robot_key, content):
+    headers = {
+        'Content-Type': 'application/json',
+    }
+    data = json.dumps({
+        "msgtype": "markdown", 
+        "markdown": { "content": content },
+    })
+    response = requests.post('https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=' + robot_key, headers=headers, data=data)
+
+def send_feishu_robot(robot_key, content):
+    headers = {
+        'Content-Type': 'application/json',
+    }
+    data = json.dumps({
+        "msg_type": "post",
+        "content": {
+            "post": {
+                "zh_cn": content
+            }
+        }
+    })
+    response = requests.post('https://open.feishu.cn/open-apis/bot/v2/hook/' + robot_key, headers=headers, data=data)
+    print(response)
 
 YOUDAO_URL = 'https://openapi.youdao.com/api'
 APP_KEY = '36044cb9bfbba320'
@@ -156,3 +198,30 @@ if __name__=='__main__':
         host = '0.0.0.0',
         # ssl_context=('sg.gjol.vip.pem', 'sg.gjol.vip.key')
     )
+
+    # test测试
+    # Text = ' Starlink is designed for low to medium population density, which means we can hit max users in some areas fast. \nPlease sign up early to ensure a spot. As more satellites roll out, SpaceX will be able to serve more. \nhttps://t.co/Q1VvqVmJ2i\n'
+    # UserName = 'elonmusk'
+    # LinkToTweet = 'https://twitter.com/elonmusk/status/1446125877494833162'
+    # CreatedAt = 'October 07, 2021 at 10:50PM'
+    # TranslatorText = SelectTranslator(Text)
+    # feishu_content = {"content": []}
+    # # feishu_content["title"] = TranslatorText
+    # feishu_content["content"].append([
+    #     {
+    #         "tag": "text",
+    #         "text": CreatedAt,
+    #     },
+    #     {
+    #         "tag": "a",
+    #         "text": UserName,
+    #         "href": 'https://twitter.com/' + UserName
+    #     },
+    # ])
+    # feishu_content["content"].append([
+    #     {
+    #         "tag": "text",
+    #         "text": "\n{}{}\n{}".format(Text, TranslatorText, LinkToTweet),
+    #     },
+    # ])
+    # send_feishu_robot(feishu_robot_key, feishu_content)

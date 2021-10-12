@@ -45,20 +45,20 @@ def translate():
             # CreatedAt = json_table['CreatedAt']
 
             try:
-                TranslatorText = SelectTranslator(Text)
-                print(TranslatorText)
+                # TranslatorText = SelectTranslator(Text)
+                # print(TranslatorText)
 
-                # 发送到微信机器人
-                wx_content = "{} **[@{}](https://twitter.com/{})** \n {}\n{}\n\n[{}]({})\n".format(
-                            CreatedAt,
-                            UserName,
-                            UserName,
-                            Text,
-                            TranslatorText,
-                            LinkToTweet,
-                            LinkToTweet
-                        )
-                send_wx_robot(wx_robot_key, wx_content)
+                # # 发送到微信机器人
+                # wx_content = "{} **[@{}](https://twitter.com/{})** \n {}\n{}\n\n[{}]({})\n".format(
+                #             CreatedAt,
+                #             UserName,
+                #             UserName,
+                #             Text,
+                #             TranslatorText,
+                #             LinkToTweet,
+                #             LinkToTweet
+                #         )
+                # send_wx_robot(wx_robot_key, wx_content)
 
                 # 发送到飞书机器人
                 feishu_content = {"content": []}
@@ -77,7 +77,8 @@ def translate():
                 feishu_content["content"].append([
                     {
                         "tag": "text",
-                        "text": "\n{}\n{}\n\n{}".format(Text, TranslatorText, LinkToTweet),
+                        "text": "\n{}\n\n{}".format(Text, LinkToTweet),
+                        # "text": "\n{}\n{}\n\n{}".format(Text, TranslatorText, LinkToTweet),
                     },
                 ])
                 send_feishu_robot(feishu_robot_key, feishu_content)

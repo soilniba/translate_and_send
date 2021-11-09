@@ -65,19 +65,21 @@ def translate():
                 # feishu_content["title"] = TranslatorText
                 feishu_content["content"].append([
                     {
-                        "tag": "text",
-                        "text": CreatedAt,
-                    },
-                    {
                         "tag": "a",
-                        "text": UserName,
-                        "href": 'https://twitter.com/' + UserName
+                        "text": CreatedAt,
+                        "href": LinkToTweet
                     },
+                    # {
+                    #     "tag": "a",
+                    #     "text": UserName,
+                    #     "href": 'https://twitter.com/' + UserName
+                    # },
                 ])
                 feishu_content["content"].append([
                     {
                         "tag": "text",
-                        "text": "\n{}\n\n{}".format(Text, LinkToTweet),
+                        "text": "\n{}".format(Text),
+                        # "text": "\n{}\n\n{}".format(Text, LinkToTweet),
                         # "text": "\n{}\n{}\n\n{}".format(Text, TranslatorText, LinkToTweet),
                     },
                 ])
